@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DerpRoom Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #chat-container {
+            width: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        #chat-messages {
+            height: 200px;
+            overflow-y: scroll;
+            border-bottom: 1px solid #ccc;
+        }
+
+        input {
+            width: 70%;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    
+    <script>
+        const socket = new WebSocket("ws://localhost:8765");
+        const chatMessages = document.getElementById("chat-messages");
+        const messageInput = document.getElementById("message-input");
+
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message.trim() !== "") {
+                socket.send(message);
+                messageInput.value = "";
+            }
+        }
+
+        socket.onmessage = function (event) {
+            const message = event.data;
+            const messageElement = document.createElement("div");
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+        };
+    </script>
+</body>
+</html>
